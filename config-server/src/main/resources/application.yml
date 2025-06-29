@@ -1,0 +1,28 @@
+server:
+  port: 8888
+
+logging:
+  level:
+    ROOT: INFO
+    org.spring.framework.cloud.config: DEBUG
+
+spring:
+  application:
+    name: configserver
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/m2cci-YBI/spring-cloud-config-repo
+          default-label: main
+          username: m2cci-YBI
+          password: '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'
+          clone-on-start: true
+    fail-fast: true
+  security:
+    user:
+      name: spring_cloud_user
+      password: '1234'
+
+log:
+  app-name: config-server
