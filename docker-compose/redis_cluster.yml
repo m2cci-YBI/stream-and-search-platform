@@ -8,6 +8,8 @@ services:
       - "6379:6379"
     networks:
       - ${GLOBAL_NETWORK:-redis}
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service-1:8761/eureka/,http://discovery-service-2:8762/eureka/
   redis-slave:
     image: redis:7.2.4
     command: ["redis-server", "--slaveof", "redis-master", "6379"]
