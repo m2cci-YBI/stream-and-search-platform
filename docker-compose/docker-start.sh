@@ -7,16 +7,19 @@
 
 set -euo pipefail
 
+# resolve directory of this script so paths work regardless of cwd
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+
 # Compose file bundle – keep Postgres out, use host Postgres for Keycloak.
 COMPOSE_ARGS=(
-  -f docker-compose/common.yml
-  -f docker-compose/kafka_cluster.yml
-  -f docker-compose/elastic_cluster.yml
-  -f docker-compose/redis_cluster.yml
-  -f docker-compose/monitoring.yml
-  -f docker-compose/zipkin.yml
-  -f docker-compose/keycloak_authorization_server.yml  # talks to host Postgres
-  -f docker-compose/services.yml
+  -f "$SCRIPT_DIR/common.yml"
+  -f "$SCRIPT_DIR/kafka_cluster.yml"
+  -f "$SCRIPT_DIR/elastic_cluster.yml"
+  -f "$SCRIPT_DIR/redis_cluster.yml"
+  -f "$SCRIPT_DIR/monitoring.yml"
+  -f "$SCRIPT_DIR/zipkin.yml"
+  -f "$SCRIPT_DIR/keycloak_authorization_server.yml"  # talks to host Postgres
+  -f "$SCRIPT_DIR/services.yml"
 )
 
 # Start the stack (forward any extra CLI arguments).

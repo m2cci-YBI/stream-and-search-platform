@@ -6,15 +6,17 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+
 COMPOSE_ARGS=(
-  -f docker-compose/common.yml
-  -f docker-compose/kafka_cluster.yml
-  -f docker-compose/elastic_cluster.yml
-  -f docker-compose/redis_cluster.yml
-  -f docker-compose/monitoring.yml
-  -f docker-compose/zipkin.yml
-  -f docker-compose/keycloak_authorization_server.yml
-  -f docker-compose/services.yml
+  -f "$SCRIPT_DIR/common.yml"
+  -f "$SCRIPT_DIR/kafka_cluster.yml"
+  -f "$SCRIPT_DIR/elastic_cluster.yml"
+  -f "$SCRIPT_DIR/redis_cluster.yml"
+  -f "$SCRIPT_DIR/monitoring.yml"
+  -f "$SCRIPT_DIR/zipkin.yml"
+  -f "$SCRIPT_DIR/keycloak_authorization_server.yml"
+  -f "$SCRIPT_DIR/services.yml"
 )
 
 # Stop containers and optionally prune anonymous volumes.
