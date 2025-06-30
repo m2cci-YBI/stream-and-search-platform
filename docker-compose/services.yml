@@ -33,7 +33,7 @@ services:
       - kafka-broker-2
       - kafka-broker-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
@@ -70,7 +70,7 @@ services:
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=error"
       - "LOGGING_LEVEL_ROOT=error"
       - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
@@ -96,7 +96,7 @@ services:
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
       - "LOG_APP-NAME=config-server"
       - "SERVER_PORT=8888"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
@@ -111,7 +111,7 @@ services:
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5018 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5018"
       - "LOG_APP-NAME=config-server-ha"
       - "SERVER_PORT=8889"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
@@ -135,7 +135,7 @@ services:
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
@@ -177,7 +177,7 @@ services:
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
@@ -217,7 +217,7 @@ services:
     depends_on:
       - config-server
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8184"
@@ -256,7 +256,7 @@ services:
     depends_on:
       - config-server
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=error"
       - "LOGGING_LEVEL_ROOT=error"
       - "SERVER_PORT=8187"
@@ -289,7 +289,7 @@ services:
     depends_on:
       - config-server
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8188"
@@ -317,7 +317,7 @@ services:
     volumes:
       - "./docker-logs:/workspace/discovery-service/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8761"
       - "SPRING_PROFILES_ACTIVE=peer1"
@@ -334,7 +334,7 @@ services:
     volumes:
       - "./docker-logs:/workspace/discovery-service/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5015 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5015"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8762"
       - "SPRING_PROFILES_ACTIVE=peer2"
@@ -357,7 +357,7 @@ services:
     links:
       - "redis-master:redis"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5016 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5016"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
       - "LOGGING_LEVEL_ROOT=debug"
       - "SERVER_PORT=9092"
@@ -386,7 +386,7 @@ services:
     links:
       - "redis-master:redis"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5017 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5017"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
       - "LOGGING_LEVEL_ROOT=debug"
       - "SERVER_PORT=9093"
