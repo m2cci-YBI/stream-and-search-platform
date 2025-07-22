@@ -1,4 +1,6 @@
 HELP.md
+DETAILED_OVERVIEW.md
+CODE_REFERENCE_OVERVIEW.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
