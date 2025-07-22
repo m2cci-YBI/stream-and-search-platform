@@ -15,7 +15,7 @@ spring:
 #          uri: https://github.com/m2cci-YBI/spring-cloud-config-repo
 #          default-label: main
 #          username: m2cci-YBI
-#          password: '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'
+#          password: *****************
 #          clone-on-start: true
 #    fail-fast: true
 
