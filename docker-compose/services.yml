@@ -33,7 +33,7 @@ services:
       - kafka-broker-2
       - kafka-broker-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
@@ -49,8 +49,12 @@ services:
       - "SPRING_ZIPKIN_SENDER_TYPE=web"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
       - "TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN}"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=20"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   kafka-to-elastic-service:
     image: ${GROUP_ID}/kafka.to.elastic.service:${SERVICE_VERSION:-latest}
     ports:
@@ -70,9 +74,9 @@ services:
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
-      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=error"
-      - "LOGGING_LEVEL_ROOT=error"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
       - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
       - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
@@ -85,9 +89,13 @@ services:
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
       - "SPRING_DATA_ELASTICSEARCH_CLIENT_REACTIVE_ENDPOINTS=elastic-1:9200"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=20"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   config-server:
     image: ${GROUP_ID}/config.server:${SERVICE_VERSION:-latest}
     ports:
@@ -95,12 +103,16 @@ services:
       - "8888:8888"
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
+      # use local config repo
+      - "../config-server-repository:/workspace/local-config-repo"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
       - "LOG_APP-NAME=config-server"
       - "SERVER_PORT=8888"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
       - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      # use local config repo
+      - "SPRING_PROFILES_ACTIVE=native"
     networks:
       - ${GLOBAL_NETWORK:-services}
   config-server-ha:
@@ -110,12 +122,16 @@ services:
       - "8889:8889"
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
+      # use local config repo
+      - "../config-server-repository:/workspace/local-config-repo"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5018"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5018"
       - "LOG_APP-NAME=config-server-ha"
       - "SERVER_PORT=8889"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"    
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      # use local config repo
+      - "SPRING_PROFILES_ACTIVE=native"
     networks:
       - ${GLOBAL_NETWORK:-services}
   elastic-query-service-1:
@@ -135,7 +151,7 @@ services:
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
@@ -157,9 +173,13 @@ services:
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
       - "SPRING_DATA_ELASTICSEARCH_CLIENT_REACTIVE_ENDPOINTS=elastic-1:9200"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=10"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 800m
   elastic-query-service-2:
     image: ${GROUP_ID}/elastic.query.service:${SERVICE_VERSION:-latest}
     ports:
@@ -177,7 +197,7 @@ services:
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
@@ -200,11 +220,15 @@ services:
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
       - "SPRING_DATA_ELASTICSEARCH_CLIENT_REACTIVE_ENDPOINTS=elastic-1:9200"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"    
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=10"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 800m
   elastic-query-web-client:
-    image: ${GROUP_ID}/elastic.query.web.client:${SERVICE_VERSION:-latest}
+    image: ${GROUP_ID}/elastic.query.web.client:${SERVICE_VERSION:-lat est}
     ports:
       - "5010:5010"
       - "8184:8184"
@@ -217,7 +241,7 @@ services:
     depends_on:
       - config-server
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8184"
@@ -239,9 +263,13 @@ services:
       - "SPRING_ZIPKIN_SENDER_TYPE=kafka"
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=50"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   kafka-streams-service:
     image: ${GROUP_ID}/kafka.streams.service:${SERVICE_VERSION:-latest}
     ports:
@@ -256,7 +284,7 @@ services:
     depends_on:
       - config-server
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=error"
       - "LOGGING_LEVEL_ROOT=error"
       - "SERVER_PORT=8187"
@@ -272,9 +300,13 @@ services:
       - "SPRING_ZIPKIN_SENDER_TYPE=kafka"
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=20"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   analytics-service:
     image: ${GROUP_ID}/analytics.service:${SERVICE_VERSION:-latest}
     ports:
@@ -289,7 +321,7 @@ services:
     depends_on:
       - config-server
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8188"
@@ -306,9 +338,13 @@ services:
       - "SPRING_ZIPKIN_SENDER_TYPE=kafka"
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=20"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   discovery-service-1:
     image: ${GROUP_ID}/discovery.service:${SERVICE_VERSION:-latest}
     ports:
@@ -317,15 +353,19 @@ services:
     volumes:
       - "./docker-logs:/workspace/discovery-service/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8761"
       - "SPRING_PROFILES_ACTIVE=peer1"
       - "EUREKA_INSTANCE_HOSTNAME=discovery-service-1"
       - "LOG_APP-NAME=discovery-service-1"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=25"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   discovery-service-2:
     image: ${GROUP_ID}/discovery.service:${SERVICE_VERSION:-latest}
     ports:
@@ -334,15 +374,19 @@ services:
     volumes:
       - "./docker-logs:/workspace/discovery-service/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5015"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5015"
       - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=8762"
       - "SPRING_PROFILES_ACTIVE=peer2"
       - "EUREKA_INSTANCE_HOSTNAME=discovery-service-2"
       - "LOG_APP-NAME=discovery-service-2"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=25"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   gateway-service-1:
     image: ${GROUP_ID}/gateway.service:${SERVICE_VERSION:-latest}
     ports:
@@ -357,9 +401,9 @@ services:
     links:
       - "redis-master:redis"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5016"
-      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
-      - "LOGGING_LEVEL_ROOT=debug"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5016"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=9092"
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888,http://config-server-ha:8889"
       - "SPRING_REDIS_HOST=redis"
@@ -369,9 +413,13 @@ services:
       - "SPRING_ZIPKIN_SENDER_TYPE=kafka"
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=20"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m
   gateway-service-2:
     image: ${GROUP_ID}/gateway.service:${SERVICE_VERSION:-latest}
     ports:
@@ -386,9 +434,9 @@ services:
     links:
       - "redis-master:redis"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5017"
-      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
-      - "LOGGING_LEVEL_ROOT=debug"
+      - "JAVA_OPTS=-Xms256m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5017"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
       - "SERVER_PORT=9093"
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888,http://config-server-ha:8889"
       - "SPRING_REDIS_HOST=redis"
@@ -398,6 +446,10 @@ services:
       - "SPRING_ZIPKIN_SENDER_TYPE=kafka"
       - "SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
-      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"      
+      - "MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411"
+      - "BPL_JVM_HEAD_ROOM=0"
+      - "BPL_JVM_THREAD_COUNT=20"
+      - "BPL_JVM_OFF_HEAP=0"
     networks:
       - ${GLOBAL_NETWORK:-services}
+    mem_limit: 700m

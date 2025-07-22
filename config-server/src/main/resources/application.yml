@@ -4,21 +4,21 @@ server:
 logging:
   level:
     ROOT: INFO
-    org.spring.framework.cloud.config: DEBUG
-
+    org.spring.framework.cloud.config: INFO
 spring:
   application:
     name: configserver
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/m2cci-YBI/spring-cloud-config-repo
-          default-label: main
-          username: m2cci-YBI
-          password: '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'
-          clone-on-start: true
-    fail-fast: true
+#  cloud:
+#    config:
+#      server:
+#        git:
+#          uri: https://github.com/m2cci-YBI/spring-cloud-config-repo
+#          default-label: main
+#          username: m2cci-YBI
+#          password: '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'
+#          clone-on-start: true
+#    fail-fast: true
+
   security:
     user:
       name: spring_cloud_user
@@ -26,3 +26,15 @@ spring:
 
 log:
   app-name: config-server
+
+---
+# Native profile: load only when SPRING_PROFILES_ACTIVE=native
+spring:
+  config:
+    activate:
+      on-profile: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:/workspace/local-config-repo

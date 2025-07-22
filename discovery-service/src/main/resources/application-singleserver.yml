@@ -14,7 +14,7 @@ eureka:
 
 logging:
   level:
-    ROOT: DEBUG
+    ROOT: INFO
     com.netflix.eureka: OFF
     com.netflix.discovery: OFF
 

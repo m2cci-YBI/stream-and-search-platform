@@ -1,5 +1,5 @@
 logging:
-  level.root: DEBUG
+  level.root: INFO
 
 server:
   port: 9092
